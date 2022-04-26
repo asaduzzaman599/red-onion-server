@@ -19,6 +19,14 @@ const run = async () => {
     try {
         await client.connect()
         console.log("db connected")
+
+        app.post('/login', async (req, res) => {
+            const email = req.body;
+            console.log(email)
+            const token = jwt.sign(email, process.env.ACCESSTOKEN, { expiresIn: '1d' });
+            res.send(token)
+        })
+
         app.get('/foods/:type', async (req, res) => {
             const type = req.params.type;
             const connectionFood = client.db('foodOnion').collection(type)
