@@ -29,17 +29,32 @@ const run = async () => {
 
         app.get('/foods/:type', async (req, res) => {
             const type = req.params.type;
-            const connectionFood = client.db('foodOnion').collection(type)
-            const cursor = connectionFood.find({});
+            const connectionFood = client.db('foodOnion').collection('foods')
+            const query = {
+                category: type
+            }
+            const cursor = connectionFood.find(query);
             const result = await cursor.toArray();
             res.send(result)
+        })
+
+        app.get('/searchFood', async (req, res) => {
+            const searchText = req.query.name;
+
+            const connectionFood = client.db('foodOnion').collection('foods')
+
+            const cursor = connectionFood.find({});
+            const result = await cursor.toArray();
+            const searchResult = result.filter(food => food.name.toLowerCase().includes(searchText.toLowerCase()))
+            res.send(searchResult)
+
         })
 
         app.get('/food', async (req, res) => {
             const type = req.query.type;
             const id = req.query.id;
             console.log(id, type)
-            const connectionFood = client.db('foodOnion').collection(type)
+            const connectionFood = client.db('foodOnion').collection('foods')
             const query = {
                 _id: ObjectId(id)
             }
